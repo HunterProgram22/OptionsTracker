@@ -1,4 +1,4 @@
 import options as opt
 
-test = opt.Option("CLNS", "4/20/2018")
-test.return_data()
+test = opt.BuyCallOption("CLNS", "4/20/2018")
+test.option_summary()
