@@ -1,5 +1,4 @@
-import Options as opt
+import options as opt
 
-test = opt.Option("CLNS")
+test = opt.Option("CLNS", "4/20/2018")
 test.return_data()
-print(test.contract_cost())
