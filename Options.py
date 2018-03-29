@@ -11,7 +11,7 @@ class Option(object):
         self.purchase_date = purchase_date
         self.total_contracts = contracts
         self.shares_per_contract = shares
-        self.total_shares = self.total_contracts*self.shares_per_contract
+        self.total_contract_shares = self.total_contracts*self.shares_per_contract
         self.strike_price = self.set_strike_price()
         self.contract_price = self.set_contract_price()
 
@@ -24,7 +24,7 @@ class Option(object):
         return self.contract_price
 
     def contract_cost(self):
-        self.contract_cost = self.contract_price*(self.total_shares)
+        self.contract_cost = self.contract_price*(self.total_contract_shares)
         return self.contract_cost
 
 
@@ -38,15 +38,23 @@ class BuyCallOption(Option):
 
     def calculate_breakeven_price(self):
         self.breakeven_price = ((self.strike_price*(
-                self.total_shares))+self.contract_cost())/(self.total_shares)
+                self.total_contract_shares))+self.contract_cost())/(self.total_contract_shares)
         return self.breakeven_price
 
     def calculate_maximum_loss(self):
-        self.maximum_loss = self.contract_price*self.total_shares
+        self.maximum_loss = self.contract_price*self.total_contract_shares
         return self.maximum_loss
 
+    def calculate_profit(self):
+        self.current_stock_price = float(input("What is the current stock price for " + self.stock_symbol + ":\n"))
+        if self.current_stock_price < self.strike_price:
+            self.option_profit = -(self.contract_cost)
+        else:
+            self.option_profit = (self.current_stock_price - self.strike_price)*self.total_contract_shares
+        return self.option_profit
+
     def option_summary(self):
-        print("You have the option to buy " + str(self.total_shares) + " shares of " +\
+        print("You have the option to buy " + str(self.total_contract_shares) + " shares of " +\
         str(self.stock_symbol) + "\non " + str(self.expiration_date) + " at a price of $" +\
         str(self.strike_price) + " per share.")
         print("Your breakeven price is: $" + str(self.breakeven_price))
