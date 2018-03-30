@@ -1,7 +1,13 @@
 # A program for stock options.
+from Robinhood.Robinhood import Robinhood
 import time
 
 today = time.strftime("%m/%d/%Y")
+
+trade_account = Robinhood.Robinhood()
+logged_in = trade_account.login(username="KudelaFinance@gmail.com", password="Deacon1234")
+quote_info = trade_account.quote_data("CLNS")
+print(quote_info)
 
 class Option(object):
     '''The main class for an option contract.'''
@@ -28,30 +34,16 @@ class Option(object):
         return self.contract_cost
 
 
-class BuyCallOption(Option):
-    '''A subclass option that is an option to buy the stock at the strike strike_price
-    on the expiration date.'''
+class BuyOption(Option):
+    '''A subclass of option for shared methods for buy options.'''
     def __init__(self, ticker, expiration_date):
         Option.__init__(self, ticker, expiration_date)
         self.breakeven_price = self.calculate_breakeven_price()
         self.maximum_loss = self.calculate_maximum_loss()
 
-    def calculate_breakeven_price(self):
-        self.breakeven_price = ((self.strike_price*(
-                self.total_contract_shares))+self.contract_cost())/(self.total_contract_shares)
-        return self.breakeven_price
-
     def calculate_maximum_loss(self):
         self.maximum_loss = self.contract_price*self.total_contract_shares
         return self.maximum_loss
-
-    def calculate_profit(self):
-        self.current_stock_price = float(input("What is the current stock price for " + self.stock_symbol + ":\n"))
-        if self.current_stock_price < self.strike_price:
-            self.option_profit = -(self.contract_cost)
-        else:
-            self.option_profit = (self.current_stock_price - self.strike_price)*self.total_contract_shares
-        return self.option_profit
 
     def option_summary(self):
         print("You have the option to buy " + str(self.total_contract_shares) + " shares of " +\
@@ -59,3 +51,43 @@ class BuyCallOption(Option):
         str(self.strike_price) + " per share.")
         print("Your breakeven price is: $" + str(self.breakeven_price))
         print("Your maximum loss is: $" + str(self.maximum_loss))
+
+
+class BuyCallOption(BuyOption):
+    '''An option to buy the stock at the strike price on the expiration date.'''
+    def __init__(self, ticker, expiration_date):
+        BuyOption.__init__(self, ticker, expiration_date)
+
+    def calculate_breakeven_price(self):
+        self.breakeven_price = ((self.strike_price*(
+                self.total_contract_shares))+self.contract_cost())/(self.total_contract_shares)
+        return self.breakeven_price
+
+    def calculate_profit(self):
+        self.current_stock_price = float(input(
+                "What is the current stock price for " + self.stock_symbol + ":\n"))
+        if self.current_stock_price < self.strike_price:
+            self.option_profit = -(self.contract_cost)
+        else:
+            self.option_profit = (self.current_stock_price - self.strike_price)*self.total_contract_shares
+        return self.option_profit
+
+
+class BuyPutOption(BuyOption):
+    '''An option to sell the stock at the strike price on the expiration date.'''
+    def __init__(self, ticker, expiration_date):
+        BuyOption.__init__(self, ticker, expiration_date)
+
+    def calculate_breakeven_price(self):
+        self.breakeven_price = ((self.strike_price*(
+                self.total_contract_shares))-self.contract_cost())/(self.total_contract_shares)
+        return self.breakeven_price
+
+    def calculate_profit(self):
+        self.current_stock_price = float(input(
+                "What is the current stock price for " + self.stock_symbol + ":\n"))
+        if self.current_stock_price > self.strike_price:
+            self.option_profit = -(self.contract_cost)
+        else:
+            self.option_profit = (self.strike_price - self.current_stock_price)*self.total_contract_shares
+        return self.option_profit
