@@ -5,7 +5,7 @@ import time
 today = time.strftime("%m/%d/%Y")
 
 trade_account = Robinhood.Robinhood()
-logged_in = trade_account.login(username="KudelaFinance@gmail.com", password="Deacon1234")
+logged_in = trade_account.login(username="######", password="######")
 quote_info = trade_account.quote_data("CLNS")
 print(quote_info)
 
